@@ -1,0 +1,29 @@
+InputFile.txt has the following format:
+
+Mesh size (N x N):
+
+Size of sample in x direction:
+
+Size of sample in y direction:
+
+Material thickness:
+
+Thermal conductivity along x:
+
+Thermal conductivity along y:
+
+Supplied temperature:
+
+Read temperatures at opposite end (Amount needed is N + 1):
+
+Output file will generate a matrix of size ((N + 1) x (N + 1)) for all nodal temperatures
+
+No file extension for output file is needed, it will automatically generate a .csv file
+
+To compile (from within feaheat subfolder):
+
+javac HeatTransfer.java BoundaryFlux.java BoundaryMatrix.java LUDecomp.java StiffnessMatrix.java
+
+To run (while inside the main feaheat folder and outside of feaheat subfolder):
+
+java feaheat.HeatTransfer
