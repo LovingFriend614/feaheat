@@ -19,7 +19,7 @@ public class HeatTransfer {
     StiffnessMatrix smatrix = new StiffnessMatrix();
     long timeInitial = System.nanoTime();
 
-    int N = (int) input.nextInt();
+    int N = (int) input.nextInt(); //N value
     int n = ( N + 1 ) * ( N + 1 );
     int qn = (int) 2 + ( 2 * N );
     int sqn = N + 1;
@@ -39,29 +39,30 @@ public class HeatTransfer {
     double L[][] = new double[n][n]; //Lower triangular matrix
     double U[][] = new double[n][n]; //Upper triangular matrix
     double Y[] = new double[n];
+    double KK[][] = new double[E_l][2];
 
     double x_size = (double) input.nextDouble();
     double y_size = (double) input.nextDouble();
     double t = (double) input.nextDouble();
-    double k_xx = (double) input.nextDouble();
-    double k_yy = (double) input.nextDouble();
-    double Ts = (double) input.nextDouble();
+    double k_xx = (double) input.nextDouble(); //Thermal conductivity x
+    double k_yy = (double) input.nextDouble(); //Thermal conductivity y
+    double Ts = (double) input.nextDouble(); //Input temperature
 
     for (int i = 0; i < sqn; ++i) {
-      Tm[i] = (double) input.nextDouble();
+      Tm[i] = (double) input.nextDouble(); //Output temperatures
     }
 
-    int numEle = input.nextInt();
-    int K_list[] = new int[numEle];
-    double K_val[][] = new double[numEle][2];
+    int numEle = input.nextInt(); //Number of defective elements
+    int K_list[] = new int[numEle]; //Vector of defective elements
+    double K_val[][] = new double[numEle][2]; //Vector for new thermal conductivities
 
     if ( numEle != 0 ) {
       for (int i = 0; i < numEle; ++i) {
-        K_list[i] = input.nextInt() - 1;
+        K_list[i] = input.nextInt() - 1; //Values to defective elements
       }
       for (int i = 0; i < 2; ++i) {
         for (int j = 0; j < numEle; ++j) {
-          K_val[j][i] = input.nextDouble();
+          K_val[j][i] = input.nextDouble(); //Values of new thermal conductivities
         }
       }
     }
@@ -75,6 +76,16 @@ public class HeatTransfer {
       for (int i = 0; i < numEle; ++i) {
         K_val[i][1] = k_yy;
       }
+    }
+
+    for (int i = 0; i < E_l; ++i) {
+      KK[i][0] = k_xx;
+      KK[i][1] = k_yy;
+    }
+
+    for (int i = 0; i < numEle; ++i) {
+      KK[K_list[i]][0] = K_val[i][0];
+      KK[K_list[i]][1] = K_val[i][1];
     }
 
     //--------------------------------------------------------------------------
@@ -191,6 +202,10 @@ public class HeatTransfer {
       }
       T[i] = ( Y[i] - T_sum ) / U[i][i];
     }
+
+    //--------------------------------------------------------------------------
+    //Genetic algorithm routine
+    
 
     //--------------------------------------------------------------------------
     //Print temperature to .csv file
