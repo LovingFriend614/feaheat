@@ -1,4 +1,4 @@
-package feaheat2;
+package feaheat;
 import java.lang.*;
 import java.io.File;
 import java.io.PrintWriter;
@@ -16,6 +16,7 @@ public class HeatTransfer {
     String fileName = fileInput.next();
     PrintWriter outputFile = new PrintWriter(fileName + ".csv");
     BoundaryFlux flux = new BoundaryFlux();
+    LUDecomp lu = new LUDecomp();
     StiffnessMatrix smatrix = new StiffnessMatrix();
     long timeInitial = System.nanoTime();
 
@@ -28,7 +29,6 @@ public class HeatTransfer {
     int w = E_l / N;
     int p = n - 1;
     int pp = nn - 1;
-    int count = N + 2;
 
     double Tb[] = new double[nn]; //Boundary temperature
     double Tm[] = new double[sqn]; //Measured temperature
@@ -117,57 +117,25 @@ public class HeatTransfer {
       }
     }
     long stiffnessf = System.nanoTime();
-    long lui = System.nanoTime();
-
-    for (int j = 0; j < count; ++j) {
-      U[0][j] = M[0][j];
-    }
-    for (int i = 0; i < count; ++i) {
-      L[i][0] = M[i][0] / U[0][0];
-    }
+    long luli = System.nanoTime();
     for (int i = 0; i < n; ++i) {
-      L[i][i] = 1;
-    }
-    for (int i = 1; i < n; ++i) {
-      if ( ( count + i ) < n ) {
-        for (int j = i; j < ( count + i ); ++j) {
-          double U_sum = 0;
-          for (int k = 1; k < i + 1; ++k) {
-            U_sum = U_sum + ( L[i][k - 1] * U[k - 1][j] );
-          }
-          U[i][j] = M[i][j] - U_sum;
-        }
-        for (int j = i + 1; j < ( count + i ); ++j) {
-          double L_sum = 0;
-          for (int k = 1; k < i + 1; ++k) {
-            L_sum = L_sum + ( L[j][k - 1] * U[k - 1][i] );
-          }
-          L[j][i] = ( M[j][i] - L_sum ) / U[i][i];
-        }
-      }
-      else {
-        for (int j = i; j < n; ++j) {
-          double U_sum = 0;
-          for (int k = 1; k < i + 1; ++k) {
-            U_sum = U_sum + ( L[i][k - 1] * U[k - 1][j] );
-          }
-          U[i][j] = M[i][j] - U_sum;
-        }
-        for (int j = i + 1; j < n; ++j) {
-          double L_sum = 0;
-          for (int k = 1; k < i + 1; ++k) {
-            L_sum = L_sum + ( L[j][k - 1] * U[k - 1][i] );
-          }
-          L[j][i] = ( M[j][i] - L_sum ) / U[i][i];
-        }
+      for (int j = 0; j < n; ++j) {
+        L[i][j] = lu.LUDecomp(N, M, i, j, 1);
       }
     }
-
-    long luf = System.nanoTime();
+    long lulf = System.nanoTime();
+    long luui = System.nanoTime();
+    for (int i = 0; i < n; ++i) {
+      for (int j = 0; j < n; ++j) {
+        U[i][j] = lu.LUDecomp(N, M, i, j, 2);
+      }
+    }
+    long luuf = System.nanoTime();
     long timeMatrixf = System.nanoTime();
     double matrixTime = (double) ( timeMatrixf - timeMatrixi ) / 1000000000;
     double stiffnessTime = (double) ( stiffnessf - stiffnessi ) / 1000000000;
-    double luTime = (double) ( luf - lui ) / 1000000000;
+    double lulTime = (double) ( lulf - luli ) / 1000000000;
+    double luuTime = (double) ( luuf - luui ) / 1000000000;
     //--------------------------------------------------------------------------
     //Calculating Y vector for LU
     Y[0] = f[0];
@@ -194,7 +162,7 @@ public class HeatTransfer {
 
     //--------------------------------------------------------------------------
     //Print temperature to .csv file
-    /*for (int i = 0; i < n; ++i) { //Matrix print M
+    for (int i = 0; i < n; ++i) { //Matrix print M
       for (int j = 0; j < n; ++j) {
         outputFile.print(round(M[i][j], 2) + "\t");
       }
@@ -213,16 +181,16 @@ public class HeatTransfer {
         outputFile.print(round(L[i][j], 2) + "\t");
       }
       outputFile.print("\n");
-    }*/
+    }
 
-    int Tout = 0;
+    /*int Tout = 0;
     for (int i = 0; i < sqn; ++i) {
       for (int j = 0; j < sqn; ++j) {
         outputFile.print(round(T[j + Tout], 2) + "\t");
       }
       Tout = Tout + sqn;
       outputFile.print("\n");
-    }
+    }*/
     outputFile.close();
 
     long timeFinal = System.nanoTime();
@@ -230,7 +198,8 @@ public class HeatTransfer {
     System.out.println("Boundary matrix generated in " + boundaryFluxTime + " seconds");
     System.out.println("Stiffness matrix and LU generated in " + matrixTime + " seconds");
     System.out.println("Stiffness matrix generated in " + stiffnessTime + " seconds");
-    System.out.println("LU generated in " + luTime + " seconds");
+    System.out.println("LU L generated in " + lulTime + " seconds");
+    System.out.println("LU U generated in " + luuTime + " seconds");
     System.out.println("File generated in " + genTime + " seconds");
   }
   private static double round(double value, int precision) {
