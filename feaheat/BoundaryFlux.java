@@ -1,4 +1,4 @@
-package feaheat;
+package feaheat2;
 import java.lang.*;
 import java.io.File;
 import java.io.PrintWriter;
@@ -7,7 +7,7 @@ import java.util.Scanner;
 import java.lang.Math;
 
 public class BoundaryFlux {
-  double BoundaryFlux(int N, double t, double x_size, double y_size, double k_xx, double k_yy, double T[], int fi) {
+  double BoundaryFlux(int N, double t, double x_size, double y_size, int numEle, double k_xx, double k_yy, int K_list[], double K_val[][], double T[], int fi) {
 
     BoundaryMatrix bm = new BoundaryMatrix();
     int sqn = N + 1;
@@ -17,7 +17,7 @@ public class BoundaryFlux {
 
     for (int i = 0; i < n; ++i) {
       for (int j = 0; j < n; ++j) {
-        M[i][j] = bm.BoundaryMatrix(N, t, x_size, y_size, k_xx, k_yy, i, j);
+        M[i][j] = bm.BoundaryMatrix(N, t, x_size, y_size, numEle, k_xx, k_yy, K_list, K_val, i, j);
       }
     }
     for (int i = 0; i < n; ++i) {

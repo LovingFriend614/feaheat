@@ -1,4 +1,4 @@
-package feaheat;
+package feaheat2;
 import java.lang.*;
 import java.io.File;
 import java.io.PrintWriter;
@@ -7,7 +7,7 @@ import java.util.Scanner;
 import java.lang.Math;
 
 public class BoundaryMatrix {
-  double BoundaryMatrix(int N, double t, double x_size, double y_size, double k_xx, double k_yy, int mi, int mj) {
+  double BoundaryMatrix(int N, double t, double x_size, double y_size, int numEle, double k_xx, double k_yy, int K_list[], double K_val[][], int mi, int mj) {
 
     //--------------------------------------------------------------------------
     //Definitions
@@ -27,7 +27,7 @@ public class BoundaryMatrix {
     double dp[] = new double[w];
     double ep[] = new double[w];
     double fp[] = new double[w];
-    double D[][] = new double[2][2];
+    double KK[][] = new double[w][2];
     double M[][] = new double[n][n];
     double W[][][] = new double[3][3][w];
     double I[][][] = new double[n][n][w];
@@ -65,9 +65,16 @@ public class BoundaryMatrix {
       fp[i] = x[1][i] - x[0][i];
     }
 
-    //D matrix
-    D[0][0] = k_xx;
-    D[1][1] = k_yy;
+    //K matrix
+    for (int i = 0; i < w; ++i) {
+      KK[i][0] = k_xx;
+      KK[i][1] = k_yy;
+    }
+
+    /*for (int i = 0; i < numEle; ++i) {
+      KK[K_list[i]][0] = K_val[i][0];
+      KK[K_list[i]][1] = K_val[i][1];
+    }*/
 
     //B and BT matrices
     for (int i = 0; i < w; ++i) {
@@ -88,12 +95,12 @@ public class BoundaryMatrix {
 
     //D by B matrix
     for (int i = 0; i < w; ++i) {
-      DB[0][0][i] = D[0][0] * B[0][0][i] * t * A_ele;
-      DB[0][1][i] = D[0][0] * B[0][1][i] * t * A_ele;
-      DB[0][2][i] = D[0][0] * B[0][2][i] * t * A_ele;
-      DB[1][0][i] = D[1][1] * B[1][0][i] * t * A_ele;
-      DB[1][1][i] = D[1][1] * B[1][1][i] * t * A_ele;
-      DB[1][2][i] = D[1][1] * B[1][2][i] * t * A_ele;
+      DB[0][0][i] = KK[i][0] * B[0][0][i] * t * A_ele;
+      DB[0][1][i] = KK[i][0] * B[0][1][i] * t * A_ele;
+      DB[0][2][i] = KK[i][0] * B[0][2][i] * t * A_ele;
+      DB[1][0][i] = KK[i][1] * B[1][0][i] * t * A_ele;
+      DB[1][1][i] = KK[i][1] * B[1][1][i] * t * A_ele;
+      DB[1][2][i] = KK[i][1] * B[1][2][i] * t * A_ele;
     }
 
     //Computing BT * D * B
