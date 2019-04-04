@@ -1,29 +1,75 @@
 InputFile.txt has the following format:
 
-Mesh size (N x N):
+	[1]  Mesh size (N x N):
 
-Size of sample in x direction:
+	[2]  Size of sample in x direction:
 
-Size of sample in y direction:
+	[3]  Size of sample in y direction:
 
-Material thickness:
+	[4]  Material thickness:
 
-Thermal conductivity along x:
+	[5]  Thermal conductivity along x (material defects excluded):
 
-Thermal conductivity along y:
+	[6]  Thermal conductivity along y (material defects excluded):
 
-Supplied temperature:
+	[7]  Supplied temperature:
 
-Read temperatures at opposite end (Amount needed is N + 1):
+	[8]  Read temperatures at opposite end (Amount needed is N + 1):*
 
-Output file will generate a matrix of size ((N + 1) x (N + 1)) for all nodal temperatures
+	[9]  Number of defective elements (if none type zero and skip [10], [11], and [12]):
 
-No file extension for output file is needed, it will automatically generate a .csv file
+	[10] Element numbers (see Ele.png for element numbering):* **
+
+	[11] New thermal conductivities along x (for selected elements in step [10]):* **
+
+	[12] New thermal conductivities along y (for selected elements in step [10]):* **
+
+
+
+*  These items are made from multiple numbers which should be listed one per line.
+	Item 1
+	Item 2
+	Item 3
+	.
+	.
+	.
+
+** Order of elements does not matter as long as their order in the lists matches up with themselves.
+	CORRECT:
+	Element 1
+	Element 5
+	Element 3
+	Thermal along x for element 1
+	Thermal along x for element 5
+	Thermal along x for element 3
+	Thermal along y for element 1
+	Thermal along y for element 5
+	Thermal along y for element 3
+
+	INCORRECT:
+	Element 1
+	Element 5
+	Element 3
+	Thermal along x for element 5
+	Thermal along x for element 1
+	Thermal along x for element 3
+	Thermal along y for element 1
+	Thermal along y for element 3
+	Thermal along y for element 3
+
+
+Output file will generate a matrix of size ((N + 1) x (N + 1)) for all nodal temperatures.
+
+No file extension for output file is needed, it will automatically generate a .csv file.
+
 
 To compile (from within feaheat subfolder):
 
-javac HeatTransfer.java BoundaryFlux.java BoundaryMatrix.java LUDecomp.java StiffnessMatrix.java
+	javac HeatTransfer.java BoundaryFlux.java BoundaryMatrix.java LUDecomp.java StiffnessMatrix.java
+
 
 To run (while inside the main feaheat folder and outside of feaheat subfolder):
 
-java feaheat.HeatTransfer
+	java feaheat.HeatTransfer
+
+
