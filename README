@@ -63,13 +63,11 @@ Output file will generate a matrix of size ((N + 1) x (N + 1)) for all nodal tem
 No file extension for output file is needed, it will automatically generate a .csv file.
 
 
-To compile (from within feaheat subfolder):
+To compile (from within feaheat2 subfolder):
 
-	javac HeatTransfer.java BoundaryFlux.java BoundaryMatrix.java LUDecomp.java StiffnessMatrix.java
-
-
-To run (while inside the main feaheat folder and outside of feaheat subfolder):
-
-	java feaheat.HeatTransfer
+	javac HeatTransfer.java BoundaryFlux.java BoundaryMatrix.java StiffnessMatrix.java
 
 
+To run (while inside the main feaheat folder and outside of feaheat2 subfolder):
+
+	java feaheat2.HeatTransfer
