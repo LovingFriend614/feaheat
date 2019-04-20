@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+		<link rel="stylesheet" type="text/css" href="Heat.css">
+    <title>Heat Transfer</title>
+  </head>
+  <body>
+    <h1>Title</h1>
+    <p>
+			N = <input id="Nin" type="text" value size="5">
+			<button type="button" onclick="linesDraw(N)">Generate</button>
+			<br>
+			Size of total element along x = <input id="x_size" type="text" value size="5">
+			<br>
+			Size of total element along y = <input id="y_size" type="text" value size="5">
+			<br>
+			Material thickness = <input id="t" type="text" value size="5">
+			<br>
+			Thermal conductivity along x = <input id="k_xx" type="text" value size="5">
+			<br>
+			Thermal conductivity along y = <input id="k_yy" type="text" value size="5">
+  	</p>
+
+		<canvas id="elementSquare" width="500" height="500">
+      <button type="button">"Heer"</button>
+		</canvas>
+  </body>
+	<script src="Heat.js"></script>
+</html>
