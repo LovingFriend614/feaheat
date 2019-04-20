@@ -17,6 +17,7 @@ public class HeatTransfer {
     PrintWriter outputFile = new PrintWriter(fileName + ".csv");
     BoundaryFlux flux = new BoundaryFlux();
     StiffnessMatrix smatrix = new StiffnessMatrix();
+    FEAGen genalg = new FEAGen();
     long timeInitial = System.nanoTime();
 
     int N = (int) input.nextInt(); //N value
@@ -40,6 +41,7 @@ public class HeatTransfer {
     double U[][] = new double[n][n]; //Upper triangular matrix
     double Y[] = new double[n];
     double KK[][] = new double[E_l][2];
+    //double KKgen[][] = new double[E_l][2];
 
     double x_size = (double) input.nextDouble();
     double y_size = (double) input.nextDouble();
@@ -205,7 +207,7 @@ public class HeatTransfer {
 
     //--------------------------------------------------------------------------
     //Genetic algorithm routine
-    
+    double[][] KKgen = genalg.FEAGen(N, KK);
 
     //--------------------------------------------------------------------------
     //Print temperature to .csv file
@@ -238,6 +240,19 @@ public class HeatTransfer {
       Tout = Tout + sqn;
       outputFile.print("\n");
     }
+
+    outputFile.print("\n");
+
+    for (int i = 0; i < E_l; ++i) {
+      outputFile.print(KK[i][0] + "\t");
+    }
+
+    outputFile.print("\n");
+
+    for (int i = 0; i < E_l; ++i) {
+      outputFile.print(KKgen[i][0] + "\t");
+    }
+
     outputFile.close();
 
     long timeFinal = System.nanoTime();
